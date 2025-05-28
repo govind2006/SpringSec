@@ -1,4 +1,5 @@
-package com.example.SpringSecEx;
+
+package com.example.SpringSecEx.model;
 
 public class Student {
     private int id;
