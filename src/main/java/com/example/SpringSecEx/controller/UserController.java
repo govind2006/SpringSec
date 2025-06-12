@@ -19,4 +19,12 @@ public class UserController {
     public Users register(@RequestBody Users user) {
         return userService.registerUser(user);
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Users user) {
+        // This method is not implemented in the original code.
+        // You can implement login logic here if needed.
+        return userService.verifyUser(user);
+    }
+        
 }
