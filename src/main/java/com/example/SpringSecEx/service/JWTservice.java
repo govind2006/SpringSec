@@ -1,19 +1,41 @@
 package com.example.SpringSecEx.service;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Base64;
 
 @Service
 public class JWTservice {
-    // This service can be used to handle JWT operations like token generation, validation, etc.
-    
-    public String generateToken() {
-        // Logic to generate JWT token for the given username
-        return  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30";
+
+    private final String SECRET;
+
+    public JWTservice() {
+        // Generate a secure 256-bit secret and Base64 encode it
+        byte[] keyBytes = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+        SECRET = Base64.getEncoder().encodeToString(keyBytes);
     }
 
-    // public boolean validateToken(String token) {
-    //     // Logic to validate the provided JWT token
-    //     return token != null && token.startsWith("generatedTokenFor:"); // Placeholder implementation
-    // }
+    public String generateToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
+    private Key getKey() {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET);
+        return Keys.hmacShaKeyFor(decodedKey);
+    }
 }

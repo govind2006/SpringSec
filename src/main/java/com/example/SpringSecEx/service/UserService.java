@@ -39,7 +39,7 @@ public class UserService {
         );
 
         if (auth.isAuthenticated()) {
-            return jwtService.generateToken();
+            return jwtService.generateToken(user.getUsername());
         }
 
         return "Invalid credentials";
